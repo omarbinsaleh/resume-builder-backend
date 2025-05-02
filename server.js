@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
+const authRouter = require('./routes/authRoutes');
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 5000;
@@ -22,6 +23,7 @@ connectDB();
 app.get('/', (req, res) => {
    res.send("WELCOME TO THE RESUME BUILDER SERVER...")
 })
+app.use('/api/auth', authRouter);
 
 
 // Start server
