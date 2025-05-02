@@ -4,20 +4,20 @@ const jwt = require('jsonwebtoken');
 
 // @description: Generate JWT Token
 const generateToken = (userId) => {
-   return jwt.sign(userId, process.env.JWT_SECRET, {expiresIn: '7d'});
+   return jwt.sign(userId, process.env.JWT_SECRET, { expiresIn: '7d' });
 }
 
 // @description: Register a new user
 // @route:       POST /api/auth/register
 // @access:      Public
- const registerUser = async (req, res) => {
+const registerUser = async (req, res) => {
    try {
-      const {name, email, password, profileImageUrl} = req.body;
+      const { name, email, password, profileImageUrl } = req.body;
 
       // check if user already exists
-      const userExists = User.findOne({email});
-      if(userExists) {
-         return res.status(400).json({success: false, message: 'User already exists with this email'});
+      const userExists = User.findOne({ email });
+      if (userExists) {
+         return res.status(400).json({ success: false, message: 'User already exists with this email' });
       };
 
       // has password
@@ -45,30 +45,32 @@ const generateToken = (userId) => {
          }
       });
    } catch (error) {
-      res.status(500).json({success: false, message: 'Something went wrong and Failed to register user', error})
+      res.status(500).json({ success: false, message: 'Something went wrong and Failed to register user', error })
    };
 };
 
 // @description: Login an existing user
 // @route:       POST /api/auth/login
 // @access:      Public
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
    try {
       // send success message
-      res.status(200).json({success: true, message: 'User logged in successfully'})
+      res.status(200).json({ success: true, message: 'User logged in successfully' })
    } catch (error) {
-      res.status(500).json({success: false, message: 'Somthing went wrong and Failed to login'})
+      res.status(500).json({ success: false, message: 'Somthing went wrong and Failed to login' })
    }
 };
 
 // @description: Get a user profile
 // @route:       POST /api/auth/profile
 // @access:      Private ( Requier JWT )
-export const getUserProfile = async (req, res) => {
+const getUserProfile = async (req, res) => {
    try {
       // send success message
-      res.status(200).json({success: true, message: 'User profile is retured successfully'});
+      res.status(200).json({ success: true, message: 'User profile is retured successfully' });
    } catch (error) {
-      res.status(500).json({success: false, message: 'Something went wrong and failed to retur user profile', error});
+      res.status(500).json({ success: false, message: 'Something went wrong and failed to retur user profile', error });
    }
 }
+
+module.exports = { registerUser, loginUser, getUserProfile };
