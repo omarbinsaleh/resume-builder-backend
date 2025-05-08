@@ -3,8 +3,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 // @description: Generate JWT Token
+// @payload: User Id
 const generateToken = (userId) => {
-   return jwt.sign(userId, process.env.JWT_SECRET, { expiresIn: '7d' });
+   return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
 }
 
 // @description: Register a new user
@@ -15,12 +16,12 @@ const registerUser = async (req, res) => {
       const { name, email, password, profileImageUrl } = req.body;
 
       // check if user already exists
-      const userExists = User.findOne({ email });
+      const userExists = await User.findOne({ email });
       if (userExists) {
          return res.status(400).json({ success: false, message: 'User already exists with this email' });
       };
 
-      // has password
+      // hash password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -54,8 +55,30 @@ const registerUser = async (req, res) => {
 // @access:      Public
 const loginUser = async (req, res) => {
    try {
-      // send success message
-      res.status(200).json({ success: true, message: 'User logged in successfully' })
+      const { email, password } = req.body;
+
+      const user = await User.findOne({ email });
+      if (!user) {
+         return res.status(500).json({ success: false, message: 'Invalid email or password' });
+      };
+
+      const isPasswordMatch = await bcrypt.compare(password, user.password);
+      if (!isPasswordMatch) {
+         return res.status(500).json({ success: false, message: 'Invalid email or password' });
+      };
+
+      // send success message with user data
+      res.status(200).json({
+         success: true,
+         message: 'User logged in successfully',
+         user: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            profileImageUrl: user.profileImageUrl,
+            token: generateToken(user._id)
+         }
+      });
    } catch (error) {
       res.status(500).json({ success: false, message: 'Somthing went wrong and Failed to login' })
    }
@@ -73,4 +96,30 @@ const getUserProfile = async (req, res) => {
    }
 }
 
-module.exports = { registerUser, loginUser, getUserProfile };
+// @description:  Delete an existing User
+// @route:        DELETE /api/auth/user
+// access:        Public
+const deleteUserByEmail = async (req, res) => {
+   try {
+      const { email } = req.body;
+
+      if (!email) {
+         return res.status(400).json({ success: false, message: 'Please provide the user email' });
+      };
+
+      const existingUser = await User.findOne({ email });
+      if (!existingUser) {
+         return res.status(400).json({ success: false, message: 'Sorry, User does not exist with this email' });
+      };
+
+      const deletedUser = await User.deleteOne({ email });
+      res.status(200).json({ success: true, message: 'User has been deleted successfully', deletedUser });
+
+   } catch (error) {
+      res.status(500).json({ success: false, message: 'Something went wrong. Failed to delete user' });
+   }
+
+
+}
+
+module.exports = { registerUser, loginUser, getUserProfile, deleteUserByEmail };
