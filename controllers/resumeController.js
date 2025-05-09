@@ -7,8 +7,81 @@ const Resume = require("../models/Resume");
 // @access        : Private
 const createResume = async (req, res) => {
    try {
+      const {title} = req.body;
+
+      // Default resume template
+      const defaultResumeData = {
+         profileInfo: {
+            profileImg: null,
+            profilePreviewUrl: "",
+            fullName: "",
+            designation: "",
+            summary: ""
+         },
+         contactInfo: {
+            email: "",
+            phone: "",
+            location: "",
+            linkedin: "",
+            github: "",
+            website: ""
+         },
+         workExperiences: [
+            {
+               company: "",
+               role: "",
+               startDate: "",
+               endDate: "",
+               description: ""
+            }
+         ],
+         education: [
+            {
+               degree: "",
+               institution: "",
+               startDate: "",
+               endDate: ""
+            }
+         ],
+         skills: [
+            {
+               name: "",
+               progress: 0
+            }
+         ],
+         projects: [
+            {
+               title: "",
+               description: "",
+               github: "",
+               liveDemo: ""
+            }
+         ],
+         certifications:[
+            {
+               title: "",
+               issuer: "",
+               year: ""
+            }
+         ],
+         languages: [
+            {
+               name: "",
+               progress: 0
+            }
+         ],
+         interests: [""],
+      };
+
+      // Create a new Resume
+      const newResume = await Resume.create({
+         userId: req.user._id,
+         title,
+         ...defaultResumeData
+      });
+
       // send a success message
-      res.status(200).json({success: true, message: 'Resume created successfully'});
+      res.status(200).json({success: true, message: 'Resume created successfully', resume: newResume});
    } catch (error) {
       res.status(500).json({success: false, message: 'Something went wrong. Failed to create resume', error: error.message});
    };
