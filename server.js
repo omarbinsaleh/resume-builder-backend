@@ -25,6 +25,16 @@ app.get('/', (req, res) => {
 })
 app.use('/api/auth', authRouter);
 
+// Server the upload folder
+app.use(
+   '/uploads',
+   express.static(path.join(__dirname, 'uploads'), {
+      setHeaders: (res, path) => {
+         res.set('Access-Control-Allow-Origin', 'http://localhost:5173');
+      }
+   })
+)
+
 
 // Start server
 app.listen(PORT, () => {

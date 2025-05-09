@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 // @payload: User Id
 const generateToken = (userId) => {
    return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
-}
+};
 
 // @description: Register a new user
 // @route:       POST /api/auth/register
@@ -46,7 +46,7 @@ const registerUser = async (req, res) => {
          }
       });
    } catch (error) {
-      res.status(500).json({ success: false, message: 'Something went wrong and Failed to register user', error })
+      res.status(500).json({ success: false, message: 'Something went wrong and Failed to register user', error });
    };
 };
 
@@ -57,11 +57,13 @@ const loginUser = async (req, res) => {
    try {
       const { email, password } = req.body;
 
+      // check if user exists with this email
       const user = await User.findOne({ email });
       if (!user) {
          return res.status(500).json({ success: false, message: 'Invalid email or password' });
       };
 
+      // check if the password is currect
       const isPasswordMatch = await bcrypt.compare(password, user.password);
       if (!isPasswordMatch) {
          return res.status(500).json({ success: false, message: 'Invalid email or password' });
@@ -80,8 +82,8 @@ const loginUser = async (req, res) => {
          }
       });
    } catch (error) {
-      res.status(500).json({ success: false, message: 'Somthing went wrong and Failed to login' })
-   }
+      res.status(500).json({ success: false, message: 'Somthing went wrong and Failed to login' });
+   };
 };
 
 // @description: Get a user profile
@@ -89,12 +91,18 @@ const loginUser = async (req, res) => {
 // @access:      Private ( Requier JWT )
 const getUserProfile = async (req, res) => {
    try {
+      const user = await User.findById(req.user.id).select('-password');
+
+      if (!user) {
+         return res.status(404).json({success: false, message: 'User not found!'});
+      };
+
       // send success message
-      res.status(200).json({ success: true, message: 'User profile is retured successfully' });
+      res.status(200).json({ success: true, message: 'User profile is retured successfully', user });
    } catch (error) {
       res.status(500).json({ success: false, message: 'Something went wrong and failed to retur user profile', error });
-   }
-}
+   };
+};
 
 // @description:  Delete an existing User
 // @route:        DELETE /api/auth/user
@@ -104,7 +112,7 @@ const deleteUserByEmail = async (req, res) => {
       const { email } = req.body;
 
       if (!email) {
-         return res.status(400).json({ success: false, message: 'Please provide the user email' });
+         return res.status(400).json({ success: false, message: 'Please provide valid user email' });
       };
 
       const existingUser = await User.findOne({ email });
@@ -117,9 +125,7 @@ const deleteUserByEmail = async (req, res) => {
 
    } catch (error) {
       res.status(500).json({ success: false, message: 'Something went wrong. Failed to delete user' });
-   }
-
-
-}
+   };
+};
 
 module.exports = { registerUser, loginUser, getUserProfile, deleteUserByEmail };
