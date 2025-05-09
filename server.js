@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
 const authRouter = require('./routes/authRoutes');
+const resumeRouter = require('./routes/resumeRoutes');
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 5000;
@@ -23,7 +24,8 @@ connectDB();
 app.get('/', (req, res) => {
    res.send("WELCOME TO THE RESUME BUILDER SERVER...")
 })
-app.use('/api/auth', authRouter);
+app.use('/api/auth', authRouter); // auth related routes
+app.use('/api/resume', resumeRouter) // resume related routes
 
 // Server the upload folder
 app.use(
