@@ -7,7 +7,7 @@ const Resume = require("../models/Resume");
 // @access        : Private
 const createResume = async (req, res) => {
    try {
-      const {title} = req.body;
+      const { title } = req.body;
 
       // Default resume template
       const defaultResumeData = {
@@ -57,7 +57,7 @@ const createResume = async (req, res) => {
                liveDemo: ""
             }
          ],
-         certifications:[
+         certifications: [
             {
                title: "",
                issuer: "",
@@ -81,9 +81,9 @@ const createResume = async (req, res) => {
       });
 
       // send a success message
-      res.status(200).json({success: true, message: 'Resume created successfully', resume: newResume});
+      res.status(200).json({ success: true, message: 'Resume created successfully', resume: newResume });
    } catch (error) {
-      res.status(500).json({success: false, message: 'Something went wrong. Failed to create resume', error: error.message});
+      res.status(500).json({ success: false, message: 'Something went wrong. Failed to create resume', error: error.message });
    };
 };
 
@@ -92,10 +92,17 @@ const createResume = async (req, res) => {
 // @access         : Private
 const getUserResumes = async (req, res) => {
    try {
-      // send a success message
-      res.status(200).json({success: true, message: "User's all resumes returned successfully"});
+      const userId = req.user._id;
+      const resumes = await Resume.find({ userId }).sort({ updatedAt: -1 });
+
+      if (resumes) {
+         // send a success message
+         res.status(200).json({ success: true, message: "User's all resumes returned successfully", resumes });
+      } else {
+         res.status(200).json({success: false, message: "No resumes created yet", resumes});
+      }
    } catch (error) {
-      res.status(500).json({success: false, message: "Something went wrong and Failed to load resumes", error: error.message});
+      res.status(500).json({ success: false, message: "Something went wrong and Failed to load resumes", error: error.message });
    };
 };
 
@@ -105,9 +112,9 @@ const getUserResumes = async (req, res) => {
 const getResumeById = async (req, res) => {
    try {
       // send a success message
-      res.status(200).json({success: true, message: "Resume is loaded successfully"})  
+      res.status(200).json({ success: true, message: "Resume is loaded successfully" })
    } catch (error) {
-      res.status(500).json({success: false, message: "Something went wrong and Failed to load resume", error: error.message});
+      res.status(500).json({ success: false, message: "Something went wrong and Failed to load resume", error: error.message });
    };
 };
 
@@ -117,9 +124,9 @@ const getResumeById = async (req, res) => {
 const updateResume = async (req, res) => {
    try {
       // send a success message
-      res.status(200).json({success: true, message: "Resume updated successfully"});
+      res.status(200).json({ success: true, message: "Resume updated successfully" });
    } catch (error) {
-      res.status(500).json({success: false, message: "Something went wrong and Failed to update the resume", error: error.message});
+      res.status(500).json({ success: false, message: "Something went wrong and Failed to update the resume", error: error.message });
    };
 };
 
@@ -129,9 +136,9 @@ const updateResume = async (req, res) => {
 const deleteResume = async (req, res) => {
    try {
       // send a success message
-      res.status(200).json({success: true, message: "Resume deleted successfully"});
+      res.status(200).json({ success: true, message: "Resume deleted successfully" });
    } catch (error) {
-      res.status(500).json({success: false, message: "Something went wrong and Failed to delete the resume", error: error.message});
+      res.status(500).json({ success: false, message: "Something went wrong and Failed to delete the resume", error: error.message });
    };
 };
 
