@@ -137,7 +137,7 @@ const updateResume = async (req, res) => {
       const resumeId = req.params.id;
       const userId = req.user._id;
 
-      // extract the resume data from the database
+      // extract the existing resume data from the database
       const resume = await Resume.findOne({_id: resumeId, userId});
 
       // validate if the resume with the provided ID and user ID exists in the database
@@ -164,8 +164,43 @@ const updateResume = async (req, res) => {
 // @access          : Private
 const deleteResume = async (req, res) => {
    try {
+      const resumeId = req.params.id;
+      const userId = req.user._id;
+
+      // find the existing resume with the resume ID and the user Id provided;
+      const resume = await Resume.findOne({_id: resumeId, userId});
+
+      if (!resume) {
+         return res.status(404).json({success: false, message: "Resume not found or unauthorized"});
+      };
+
+      // delete thumbnail link and profile preview url image from the upload folder
+      const uploadFolder = path.join(__dirname, '..', 'uploads');
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+      if (resume.thumbnailLink) {
+         const oldThumbnailLink = path.join(uploadFolder, path.basename(resume.thumbnailLink));
+         if (fs.existsSync(oldThumbnailLink)) {
+            fs.unlinkSync(oldThumbnailLink);
+         };
+      };
+
+      if (resume.profileInfo?.profilePreviewUrl) {
+         const oldProfile = path.join(uploadFolder, path.basename(resume.profileInfo.profilePreviewUrl));
+         if (fs.existsSync(oldProfile)) {
+            fs.unlink(oldProfile);
+         };
+      };
+
+      // delete the existing resume 
+      const deletedResume = await Resume.findOneAndDelete({_id: resumeId, userId});
+
+      if (!deletedResume) {
+         return res.status(404).json({success: false, message: "Resume not found or unauthorized"});
+      };
+
       // send a success message
-      res.status(200).json({ success: true, message: "Resume deleted successfully" });
+      res.status(200).json({ success: true, message: "Resume deleted successfully", deletedResume });
    } catch (error) {
       res.status(500).json({ success: false, message: "Something went wrong and Failed to delete the resume", error: error.message });
    };
