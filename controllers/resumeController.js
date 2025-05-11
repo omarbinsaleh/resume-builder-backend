@@ -111,8 +111,19 @@ const getUserResumes = async (req, res) => {
 // access           : Private
 const getResumeById = async (req, res) => {
    try {
+      const resumeId = req.params.id;
+      const userId = req.user._id;
+
+      // find resume using the resume ID and user ID
+      const resume = await Resume.findOne({_id: resumeId, userId});
+
+      // send response with a message, when no resume is found
+      if (!resume) {
+         return res.status(404).json({success: false, message: "Resume not found", resume});
+      }
+
       // send a success message
-      res.status(200).json({ success: true, message: "Resume is loaded successfully" })
+      res.status(200).json({ success: true, message: "Resume is loaded successfully", resume})
    } catch (error) {
       res.status(500).json({ success: false, message: "Something went wrong and Failed to load resume", error: error.message });
    };
@@ -123,8 +134,26 @@ const getResumeById = async (req, res) => {
 // @access          : Private
 const updateResume = async (req, res) => {
    try {
+      const resumeId = req.params.id;
+      const userId = req.user._id;
+
+      // extract the resume data from the database
+      const resume = await Resume.findOne({_id: resumeId, userId});
+
+      // validate if the resume with the provided ID and user ID exists in the database
+      if (!resume) {
+         return res.status(404).json({success: false, message: "Resume not found or unauthorized"});
+      };
+
+      // merge updated resume or information into the existing resume information
+      const updatedInfo = req.body || resume;
+      Object.assign(resume, updatedInfo);
+
+      // save the updated resume
+      const savedResume = await resume.save();
+
       // send a success message
-      res.status(200).json({ success: true, message: "Resume updated successfully" });
+      res.status(200).json({ success: true, message: "Resume updated successfully", resume: savedResume });
    } catch (error) {
       res.status(500).json({ success: false, message: "Something went wrong and Failed to update the resume", error: error.message });
    };
