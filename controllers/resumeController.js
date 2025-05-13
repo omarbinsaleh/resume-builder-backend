@@ -99,7 +99,7 @@ const getUserResumes = async (req, res) => {
          // send a success message
          res.status(200).json({ success: true, message: "User's all resumes returned successfully", resumes });
       } else {
-         res.status(200).json({success: false, message: "No resumes created yet", resumes});
+         res.status(200).json({ success: false, message: "No resumes created yet", resumes });
       }
    } catch (error) {
       res.status(500).json({ success: false, message: "Something went wrong and Failed to load resumes", error: error.message });
@@ -115,15 +115,15 @@ const getResumeById = async (req, res) => {
       const userId = req.user._id;
 
       // find resume using the resume ID and user ID
-      const resume = await Resume.findOne({_id: resumeId, userId});
+      const resume = await Resume.findOne({ _id: resumeId, userId });
 
       // send response with a message, when no resume is found
       if (!resume) {
-         return res.status(404).json({success: false, message: "Resume not found", resume});
+         return res.status(404).json({ success: false, message: "Resume not found", resume });
       }
 
       // send a success message
-      res.status(200).json({ success: true, message: "Resume is loaded successfully", resume})
+      res.status(200).json({ success: true, message: "Resume is loaded successfully", resume })
    } catch (error) {
       res.status(500).json({ success: false, message: "Something went wrong and Failed to load resume", error: error.message });
    };
@@ -138,11 +138,11 @@ const updateResume = async (req, res) => {
       const userId = req.user._id;
 
       // extract the existing resume data from the database
-      const resume = await Resume.findOne({_id: resumeId, userId});
+      const resume = await Resume.findOne({ _id: resumeId, userId });
 
       // validate if the resume with the provided ID and user ID exists in the database
       if (!resume) {
-         return res.status(404).json({success: false, message: "Resume not found or unauthorized"});
+         return res.status(404).json({ success: false, message: "Resume not found or unauthorized" });
       };
 
       // merge updated resume or information into the existing resume information
@@ -168,10 +168,10 @@ const deleteResume = async (req, res) => {
       const userId = req.user._id;
 
       // find the existing resume with the resume ID and the user Id provided;
-      const resume = await Resume.findOne({_id: resumeId, userId});
+      const resume = await Resume.findOne({ _id: resumeId, userId });
 
       if (!resume) {
-         return res.status(404).json({success: false, message: "Resume not found or unauthorized"});
+         return res.status(404).json({ success: false, message: "Resume not found or unauthorized" });
       };
 
       // delete thumbnail link and profile preview url image from the upload folder
@@ -193,10 +193,10 @@ const deleteResume = async (req, res) => {
       };
 
       // delete the existing resume 
-      const deletedResume = await Resume.findOneAndDelete({_id: resumeId, userId});
+      const deletedResume = await Resume.findOneAndDelete({ _id: resumeId, userId }); // this function returns the deleted document if deleted successfully and otherwise returns null
 
       if (!deletedResume) {
-         return res.status(404).json({success: false, message: "Resume not found or unauthorized"});
+         return res.status(404).json({ success: false, message: "Resume not found or unauthorized" });
       };
 
       // send a success message
