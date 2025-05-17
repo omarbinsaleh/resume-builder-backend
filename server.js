@@ -35,7 +35,7 @@ app.use(
          res.set('Access-Control-Allow-Origin', 'http://localhost:5173');
       }
    })
-)
+);
 
 
 // Start server
