@@ -129,7 +129,7 @@ const fileFilter = (req, file, cb) => {
 	if (allowedTypes.includes(file.mimeType)) {
 		cb(null, true);
 	} else {
-		cb (new Error('Only .png, .jpeg, .jpg formate are allowed', false);
+		cb (new Error('Only .png, .jpeg, .jpg formate are allowed', false));
 	};
 };
 
@@ -170,6 +170,8 @@ If a user uploads `MyProfilePicture.jpg`, `req.file` might look like:
 ## Create a New Resume API
 
 API end point: `http://localhost:8000/api/resume`
+Request Method: POST
+Access: Private or Protected Route
 
 The client will make a POST request to this API to create a new resume. The client are required to make sure that the following information are sent to the backend while making the POST request to the backend.
 
@@ -255,3 +257,37 @@ This controller will do the following tasks
 - Create a New Resume
 - Send a response to the client with the status code of 200 and a success message as well as the New Resume created.
 - If something goes wrong while processing these tasks, send an error response with the status code of 500 and an error message
+
+## Get Logged-In User's Resumes API
+
+API end point: `http://localhost:8000/api/resume`
+Request Method: GET
+Access: Private or Protected Route
+
+In order to get all the resumes created by a particular user, the client are required to make a GET request to this API end point with the `Authorization` header to send the bearer token.
+
+When the backend receives a GET request and the request was made to this API end point, it performs the following tasks:
+
+### `protect` Custom Middleware
+
+As it is a private API, it will perform some validation in the middle. And these validation include the following tasks
+
+- it checks for the `Authorization`  header and search for the token string in that header.
+- if it finds the token string and the token string starts with the word ‘Bearer’ then it will perform the following tasks
+    - Separate the token from the token string and save the token in a variable named `token`
+    - Decode the token for the hidden user ID in the decoded object.
+    - Using the user ID, find the user from the database
+    - Add the user information in the request object so that, if needed, other middleware can access the user information later from the request object like `req.user`
+    - After adding the user information to the request object, it calls the `next()` function and will proceed toward executing the rest of the middleware or controllers in the way.
+- In case if it does not find the token string or the token string does not start with the word ‘Bearer’, then it terminate the request-response cycle with a status code of 401 and a message indicating that No token is found or the token is not what is expected.
+- And finally, if something goes wrong while doing these task, it terminate the request-response cycle with a status code of 500 and an error message;
+
+### `getUserResumes` Controller
+
+This controller will ultimately return all the resumes listed under a particular user ID by performing the following tasks:
+
+- Extract the user ID from the `req.user` and save the ID in a variable named `userId`
+- Using the user ID, find all the available resumes listed under this user ID and save in a variable name `resumes`
+- If there is no resumes found, then send an error response to the client with the status code of 400 and an appropriate message
+- Send the resumes found to the client
+- In case while doing all these tasks, if any error happens , send an error response to the client with the status code of 500 and a message indicating that something went wrong.
