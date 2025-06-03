@@ -25,11 +25,11 @@ To login, an existing user will be provided with a login form where the user wil
 
 The backend on the other hand is looking for a request coming from the Frontend. When it detects a request and it finds that it is a POST request which was made to this `http:localhost/api/auth/login` API end point, It immediately calls a function or controller named `loginuser` , which in turn will perform the following tasks:
 
-- Extract the necessary user information such as email, password from the request body. The request body usually contains all the data that was sent by the Frontend while making the request to the backend server. In our case, these information are the user email and password.
-- After extracting the data, It will check to see if the user really exists in the database with the email provided. Not finding user with the email provided indicates that that particular user who is trying to login is not an existing user and in that case the backend will terminate the request and response cycle by sending a response with the status code (500) and a meaning full message describing the issue being occurred .
-- When the user is found to be an existing user in the database, it will further check if the password provided actually matches with the old password which the user provided when creating his or her account. In case, if the password is found to be incorrect and does not match with the old one, then it will terminate the request and response cycle by sending a response with the status code 500 and an appropriate message to the Frontend.
-- Generate a JWT token using the `jsonwebtoken` package. The payload contains the ID of the existing user
-- After all the validation process is done, it sends a success response to the Frontend with the status code 200 and a user object which will contain the user information such user ID, name, email, profile image URL and the  token generated earlier.
+- ✅ Extract the necessary user information such as email, password from the request body. The request body usually contains all the data that was sent by the Frontend while making the request to the backend server. In our case, these information are the user email and password.
+- ✅ After extracting the data, It will check to see if the user really exists in the database with the email provided. Not finding user with the email provided indicates that that particular user who is trying to login is not an existing user and in that case the backend will terminate the request and response cycle by sending a response with the status code (500) and a meaning full message describing the issue being occurred .
+- ✅ When the user is found to be an existing user in the database, it will further check if the password provided actually matches with the old password which the user provided when creating his or her account. In case, if the password is found to be incorrect and does not match with the old one, then it will terminate the request and response cycle by sending a response with the status code 500 and an appropriate message to the Frontend.
+- ✅ Generate a JWT token using the `jsonwebtoken` package. The payload contains the ID of the existing user
+- ✅ After all the validation process is done, it sends a success response to the Frontend with the status code 200 and a user object which will contain the user information such user ID, name, email, profile image URL and the  token generated earlier.
 
 ## Get User Profile API
 
@@ -37,12 +37,12 @@ Sometimes, user might want to check or see his or her profile information. For t
 
 As it is a private API, it runs a middleware function named `protect` whose purpose is to check if there is Authorization Header holding the bearer token. The followings are the tasks performed by the `protect` function.
 
-- Extract bearer token from the `req.headers.authorization`
-- Check if the token exist in the authorization header. If not, it ends the request - response cycle and sends a response with the status code 401 and a message to indicate that No such token is found.
-- Store the token in a variable and decode the token using the `jwt.verify(token, secret)` method to get the user ID.
-- Find the user from the database using the User ID found in the token.
-- Save the user information in the request object with a key named user.
-- The call the next middleware using the `next()` method.
+- ✅ Extract bearer token from the `req.headers.authorization`
+- ✅ Check if the token exist in the authorization header. If not, it ends the request - response cycle and sends a response with the status code 401 and a message to indicate that No such token is found.
+- ✅ Store the token in a variable and decode the token using the `jwt.verify(token, secret)` method to get the user ID.
+- ✅ Find the user from the database using the User ID found in the token.
+- ✅ Save the user information in the request object with a key named user.
+- ✅ The call the next middleware using the `next()` method.
 
 Now information of the user in question are accessible in the request object. And in the last step, the controller will find the user from the database using that particular User ID and send the information to the Frontend with the status code 200 and a success message to indicate the the user’s information is successfully returned, otherwise a response will be sent with the status code 500 and an error message indicating that something went wrong and couldn’t find the user information.
 
@@ -52,10 +52,10 @@ For the client to delete an user using the user’s email, it needs to make a DE
 
 Whenever the backend finds a DELETE request from the client and, it triggers a controller named `deleteUserByEmail` which will then perform the following tasks
 
-- Extract the user email from the `req.body`
-- Check if the email is provided or not. If not, it terminates the request-response cycle with the status code 400 and a message to tell the client that the email was not found in the `req.body`
-- Find and delete the user from the database using the user email.
-- Send a response with a status code 200 and an object containing these information - success equal to true, a message indicating that the delete operation is successful and the deleted user
+- ✅ Extract the user email from the `req.body`
+- ✅ Check if the email is provided or not. If not, it terminates the request-response cycle with the status code 400 and a message to tell the client that the email was not found in the `req.body`
+- ✅ Find and delete the user from the database using the user email.
+- ✅ Send a response with a status code 200 and an object containing these information - success equal to true, a message indicating that the delete operation is successful and the deleted user
 
 ## Upload Image API
 
@@ -185,22 +185,22 @@ In the backend, when it finds a POST request to this API end point from the clie
 
 As it is a private API, it will perform some validation in the middle. And these validation include the following tasks
 
-- it checks for the `Authorization`  header and search for the token string in that header.
-- if it finds the token string and the token string starts with the word ‘Bearer’ then it will perform the following tasks
+- ✅ it checks for the `Authorization`  header and search for the token string in that header.
+- ✅ if it finds the token string and the token string starts with the word ‘Bearer’ then it will perform the following tasks
     - Separate the token from the token string and save the token in a variable named `token`
     - Decode the token for the hidden user ID in the decoded object.
     - Using the user ID, find the user from the database
     - Add the user information in the request object so that, if needed, other middleware can access the user information later from the request object like `req.user`
     - After adding the user information to the request object, it calls the `next()` function and will proceed toward executing the rest of the middleware or controllers in the way.
-- In case if it does not find the token string or the token string does not start with the word ‘Bearer’, then it terminate the request-response cycle with a status code of 401 and a message indicating that No token is found or the token is not what is expected.
-- And finally, if something goes wrong while doing these task, it terminate the request-response cycle with a status code of 500 and an error message;
+- ✅ In case if it does not find the token string or the token string does not start with the word ‘Bearer’, then it terminate the request-response cycle with a status code of 401 and a message indicating that No token is found or the token is not what is expected.
+- ✅ And finally, if something goes wrong while doing these task, it terminate the request-response cycle with a status code of 500 and an error message;
 
 ### `createResume` Controller
 
 This controller will do the following tasks
 
-- Extract the resume title from the `req.body`
-- Create the default resume data with following information and store in a variable named `defaultResumeData`
+- ✅ Extract the resume title from the `req.body`
+- ✅ Create the default resume data with following information and store in a variable named `defaultResumeData`
     - Profile Information
         - Profile Image
         - Profile Preview URL
@@ -254,9 +254,9 @@ This controller will do the following tasks
         - Year
     - Languages
     - Interests
-- Create a New Resume
-- Send a response to the client with the status code of 200 and a success message as well as the New Resume created.
-- If something goes wrong while processing these tasks, send an error response with the status code of 500 and an error message
+- ✅ Create a New Resume
+- ✅ Send a response to the client with the status code of 200 and a success message as well as the New Resume created.
+- ✅ If something goes wrong while processing these tasks, send an error response with the status code of 500 and an error message
 
 ## Get Logged-In User's Resumes API
 
@@ -272,22 +272,22 @@ When the backend receives a GET request and the request was made to this API end
 
 As it is a private API, it will perform some validation in the middle. And these validation include the following tasks
 
-- it checks for the `Authorization`  header and search for the token string in that header.
-- if it finds the token string and the token string starts with the word ‘Bearer’ then it will perform the following tasks
+- ✅ it checks for the `Authorization`  header and search for the token string in that header.
+- ✅ if it finds the token string and the token string starts with the word ‘Bearer’ then it will perform the following tasks
     - Separate the token from the token string and save the token in a variable named `token`
     - Decode the token for the hidden user ID in the decoded object.
     - Using the user ID, find the user from the database
     - Add the user information in the request object so that, if needed, other middleware can access the user information later from the request object like `req.user`
     - After adding the user information to the request object, it calls the `next()` function and will proceed toward executing the rest of the middleware or controllers in the way.
-- In case if it does not find the token string or the token string does not start with the word ‘Bearer’, then it terminate the request-response cycle with a status code of 401 and a message indicating that No token is found or the token is not what is expected.
-- And finally, if something goes wrong while doing these task, it terminate the request-response cycle with a status code of 500 and an error message;
+- ✅ In case if it does not find the token string or the token string does not start with the word ‘Bearer’, then it terminate the request-response cycle with a status code of 401 and a message indicating that No token is found or the token is not what is expected.
+- ✅ And finally, if something goes wrong while doing these task, it terminate the request-response cycle with a status code of 500 and an error message;
 
 ### `getUserResumes` Controller
 
 This controller will ultimately return all the resumes listed under a particular user ID by performing the following tasks:
 
-- Extract the user ID from the `req.user` and save the ID in a variable named `userId`
-- Using the user ID, find all the available resumes listed under this user ID and save in a variable name `resumes`
-- If there is no resumes found, then send an error response to the client with the status code of 400 and an appropriate message
-- Send the resumes found to the client
-- In case while doing all these tasks, if any error happens , send an error response to the client with the status code of 500 and a message indicating that something went wrong.
+- ✅ Extract the user ID from the `req.user` and save the ID in a variable named `userId`
+- ✅ Using the user ID, find all the available resumes listed under this user ID and save in a variable name `resumes`
+- ✅ If there is no resumes found, then send an error response to the client with the status code of 400 and an appropriate message
+- ✅ Send the resumes found to the client
+- ✅ In case while doing all these tasks, if any error happens , send an error response to the client with the status code of 500 and a message indicating that something went wrong.
