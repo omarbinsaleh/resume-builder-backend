@@ -61,6 +61,10 @@ Whenever the backend finds a DELETE request from the client and, it triggers a c
 
 API End Point: `http://loacalhost:8000/api/auth/upload-image` 
 
+Request Method: POST
+
+Access: Public
+
 The purpose of this API end point is to save image in the upload directory. When  the client make a POST request to this end point, the backend with help of the `Multer` package process the image. 
 
 Here, when the client make a POST request to this API end point which is `http://localhost:8000/api/auth/upload-image` , the following middleware functions are run
@@ -170,7 +174,9 @@ If a user uploads `MyProfilePicture.jpg`, `req.file` might look like:
 ## Create a New Resume API
 
 API end point: `http://localhost:8000/api/resume`
+
 Request Method: POST
+
 Access: Private or Protected Route
 
 The client will make a POST request to this API to create a new resume. The client are required to make sure that the following information are sent to the backend while making the POST request to the backend.
