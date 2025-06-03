@@ -11,13 +11,13 @@ When a new user tries sign up by submitting the form with these information ment
 
 When the backend receives a POST request from Frontend and if it finds that the request was made to this `http://localhost:8000/api/auth/register`  API end point, it calls a function or controller named `registerUser` which will then perform the following tasks:
 
--✅ Extract the necessary information from the request body. All the data sent by the Frontend will be accessible from the request body. In our case, the information we be receiving in the backend are name, email, password and the profile image URL.
--✅ It checks to see if any user already exists in the database with the same email. if it does find a user with the same email, it ends the request and response cycle immediately and send a response to the Frontend with a status code of (400) and an appropriate message.
-✅ Hash the password using the `bcryptjs` package
-✅ Create a new user
-✅ Generate a JWT token using the `jsonwebtoken` package. The information provided in the payload is the ID of the newly created user.
-✅ Send a response to the Frontend with the status code (200) and a success message as well as a data object holding the id, name, email, profile image URL of the newly created user and the token generated earlier.
-✅ In case, while handling the tasks mentioned above, any error occurs, it will send a response to the client or the Frontend with the status code (500) and an appropriate message.
+    ✅ Extract the necessary information from the request body. All the data sent by the Frontend will be accessible from the request body. In our case, the information we be receiving in the backend are name, email, password and the profile image URL.
+    ✅ It checks to see if any user already exists in the database with the same email. if it does find a user with the same email, it ends the request and response cycle immediately and send a response to the Frontend with a status code of (400) and an appropriate message.
+    ✅ Hash the password using the `bcryptjs` package
+    ✅ Create a new user
+    ✅ Generate a JWT token using the `jsonwebtoken` package. The information provided in the payload is the ID of the newly created user.
+    ✅ Send a response to the Frontend with the status code (200) and a success message as well as a data object holding the id, name, email, profile image URL of the newly created user and the token generated earlier.
+    ✅ In case, while handling the tasks mentioned above, any error occurs, it will send a response to the client or the Frontend with the status code (500) and an appropriate message.
 
 ## Login User API
 
