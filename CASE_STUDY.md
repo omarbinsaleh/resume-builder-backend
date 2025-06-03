@@ -261,7 +261,9 @@ This controller will do the following tasks
 ## Get Logged-In User's Resumes API
 
 API end point: `http://localhost:8000/api/resume`
+
 Request Method: GET
+
 Access: Private or Protected Route
 
 In order to get all the resumes created by a particular user, the client are required to make a GET request to this API end point with the `Authorization` header to send the bearer token.
