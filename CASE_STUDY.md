@@ -333,9 +333,54 @@ As it is a private API, it will perform some validation in the middle. And these
 
 This is a custom controller function made to retrieve information of a particular resume from the database and provide those information to the client. The following are the tasks which this controller will perform step by step:
 
-- ✅ Extract resume ID from the `req.paramas.id` and store that ID in a variable named `resuemId`
+- ✅ Extract resume ID from the `req.paramas.id` and store that ID in a variable named `resumeID`
 - ✅ Extract user ID from the `req.user._id` and store that in variable named `userId`. Here one thing to note is that This `getResumeById` controller function will be executed after the `protect` middleware has been executed and if everything goes right with the `protect` middleware, it adds the user information, including the user ID being accessed here by `req.user._id`, to the request object under a key named `user`.
 - ✅ Find the resume information or data from the database using `resumeId` and `userId` as filtering information.
 - ✅ Check if the the expected resume found or not. If NOt, then terminate the request-response cycle and send a error response to the client indicating that No resume was found.
 - ✅ Send a success response to the client with the resume information found and an appropriate message. Set the 200 status code to the response.
 - ✅ Send an error response to the client with a status code of 500 and an appropriate error message.
+
+## API for Updating an Existing Resume
+
+API end point: `http://localhost:8000/api/resume/:id`
+
+Request Method: PUT
+
+Access: Private
+
+To update information of an existing resume, the client needs to make a PUT request to this API `http://localhost:8000/api/resume/:id`. The `req.body` will hold information about the update to be made and the `req.headers.authorization` will contain the authorization token or the bearer token. The client must make sure that these two pieces of information are sent to the backend with the request. When the client make the PUT request to this `http://localhost:8000/api/resume/:id` with necessary information mentioned above, the backend will run a custom middleware named `protect` and a custom controller named `updateResume`.
+
+Note: The backend generates a new authorization token and then send that newly generated token to the client side so that the client store the token and could later send that token back to the backend with every requests made to a private API. This process happens everytime when the client makes a POST request to any of the following API end points
+
+    - `http://localhost:8000/api/auth/register`  An API for registering a new user
+    - `http://localhost:8000/api/auth/login`  An API to login an existing user into the system
+
+### `protect` Custom Middleware
+
+As it is a private API, it will perform some validation in the middle. And these validation include the following tasks
+
+- ✅ it checks for the `Authorization`  header and search for the token string in that header.
+- ✅ if it finds the token string and the token string starts with the word ‘Bearer’ then it will perform the following tasks
+    - Separate the token from the token string and save the token in a variable named `token`
+    - Decode the token for the hidden user ID in the decoded object.
+    - Using the user ID, find the user from the database
+    - Add the user information in the request object so that, if needed, other middleware can access the user information later from the request object like `req.user`
+    - After adding the user information to the request object, it calls the `next()` function and will proceed toward executing the rest of the middleware or controllers in the way.
+- ✅ In case if it does not find the token string or the token string does not start with the word ‘Bearer’, then it terminate the request-response cycle with a status code of 401 and a message indicating that No token is found or the token is not what is expected.
+- ✅ And finally, if something goes wrong while doing these task, it terminate the request-response cycle with a status code of 500 and an error message;
+
+### `updateResume` Controller
+
+This is a custom controller function made to update the information of an existing resume with new information. The following are the step by step tasks that it will perform:
+
+- ✅ Extract the resume ID from the `req.params.id` and store in a variable named `resumeId`.
+- ✅ Extract the user ID from the `req.user._id` and store that in a variable named `userId`
+- ✅ Find the resume from the database using the `resumeId` and `userId` as the filtering information and store that resume information in a variable named `resume`.
+- ✅ Check if the particular resume is found or not. If NOT, then terminate the request-response cycle and send a response to the client with a status code of 404 and an appropriate message to indicate that No resume was found.
+- ✅ Collect the updates from the `req.body` and store that information in a vairable named `updatedInfo`
+- ✅ Merge the new information stored in the `updatedInfo` with the old resume which is `resume` by using the JavaScript Object method `Object.assign(targetObj, sourceObj)`.
+    ```js
+    Object.assign(resume, updatedInfo);   
+    ```
+- ✅ Save the new resume in the database and send a success response to the client with a status code of 200 and the new updated resume and an appropriate success message.
+- ✅ Handle the error, if something goes wrong in the process. Send an error response to the client with a status code of 500 and an appropriate error message.
