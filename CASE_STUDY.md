@@ -385,3 +385,46 @@ This is a custom controller function made to update the information of an existi
     ```
 - ✅ Save the new resume in the database and send a success response to the client with a status code of 200 and the new updated resume and an appropriate success message.
 - ✅ Handle the error, if something goes wrong in the process. Send an error response to the client with a status code of 500 and an appropriate error message.
+
+## API for Deleting a Resume
+
+API End Point: `http://localhost:8000/api/resume/:id`
+
+Request Method: DELETE
+
+Access: Private
+
+To delete a resume from the database, the client needs to make a DELETE request to this API `http://localhost:8000/api/resume/:id` with the `Authorization` header holding the authorization token or bearer token. After getting a DELETE request, the backend will run a middleware function named `protect` to validate Authentic user and a controller function which is named as `deleteResume`
+
+Note: The backend generates a new authorization token and then send that newly generated token to the client side so that the client store the token and could later send that token back to the backend with every requests made to a private API. This process happens everytime when the client makes a POST request to any of the following API end points
+
+    - `http://localhost:8000/api/auth/register`  An API for registering a new user
+    - `http://localhost:8000/api/auth/login`  An API to login an existing user into the system
+
+### `protect` Custom Middleware
+
+As it is a private API, it will perform some validation in the middle. And these validation include the following tasks
+
+- ✅ it checks for the `Authorization`  header and search for the token string in that header.
+- ✅ if it finds the token string and the token string starts with the word ‘Bearer’ then it will perform the following tasks
+    - Separate the token from the token string and save the token in a variable named `token`
+    - Decode the token for the hidden user ID in the decoded object.
+    - Using the user ID, find the user from the database
+    - Add the user information in the request object so that, if needed, other middleware can access the user information later from the request object like `req.user`
+    - After adding the user information to the request object, it calls the `next()` function and will proceed toward executing the rest of the middleware or controllers in the way.
+- ✅ In case if it does not find the token string or the token string does not start with the word ‘Bearer’, then it terminate the request-response cycle with a status code of 401 and a message indicating that No token is found or the token is not what is expected.
+- ✅ And finally, if something goes wrong while doing these task, it terminate the request-response cycle with a status code of 500 and an error message;
+
+### `deleteResume` Controller
+
+This controller is responsible for deleting an existing resume from the database. To achieve this goal, the controller will perform the following step by step tasks:
+
+- ✅ Extract the resume ID from the `req.params.id` and store in a variable named `resumeId`.
+- ✅ Extract the user ID from the `req.user._id` and store in a variable named `userId`.
+- ✅ Find the resume from the database using the `resumeId` and `userId` as filtering information.
+- ✅ Check if the expected resume exists in the database or not. If NOT, then terminate the request-response cycle with the status code of 404 and send an error response to the client with an appropriate message.
+- ✅ Delete the resume thumbnail and the profile previewer from the `upload/` folder.
+- ✅ Delete the resume from the database
+- ✅ Check if the resume is deleted successfully or not. If NOT, terminate the request-response cycle and send an error response to the client with a status code of 404 and an appropriate message.
+- ✅ If deleted successfully, send a success response to the client with a status code of 200 and an appropriate success message.
+- ✅ If something goes wrong in the process, through an error and send an error response to the client with a status code of 500 and an appropriate error message.
