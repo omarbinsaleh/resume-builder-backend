@@ -379,6 +379,7 @@ This is a custom controller function made to update the information of an existi
 - ✅ Check if the particular resume is found or not. If NOT, then terminate the request-response cycle and send a response to the client with a status code of 404 and an appropriate message to indicate that No resume was found.
 - ✅ Collect the updates from the `req.body` and store that information in a vairable named `updatedInfo`
 - ✅ Merge the new information stored in the `updatedInfo` with the old resume which is `resume` by using the JavaScript Object method `Object.assign(targetObj, sourceObj)`.
+
     ```js
     Object.assign(resume, updatedInfo);   
     ```
