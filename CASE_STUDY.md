@@ -328,3 +328,14 @@ As it is a private API, it will perform some validation in the middle. And these
     - After adding the user information to the request object, it calls the `next()` function and will proceed toward executing the rest of the middleware or controllers in the way.
 - ✅ In case if it does not find the token string or the token string does not start with the word ‘Bearer’, then it terminate the request-response cycle with a status code of 401 and a message indicating that No token is found or the token is not what is expected.
 - ✅ And finally, if something goes wrong while doing these task, it terminate the request-response cycle with a status code of 500 and an error message;
+
+### `getResumeById` controller
+
+This is a custom controller function made to retrieve information of a particular resume from the database and provide those information to the client. The following are the tasks which this controller will perform step by step:
+
+- ✅ Extract resume ID from the `req.paramas.id` and store that ID in a variable named `resuemId`
+- ✅ Extract user ID from the `req.user._id` and store that in variable named `userId`. Here one thing to note is that This `getResumeById` controller function will be executed after the `protect` middleware has been executed and if everything goes right with the `protect` middleware, it adds the user information, including the user ID being accessed here by `req.user._id`, to the request object under a key named `user`.
+- ✅ Find the resume information or data from the database using `resumeId` and `userId` as filtering information.
+- ✅ Check if the the expected resume found or not. If NOt, then terminate the request-response cycle and send a error response to the client indicating that No resume was found.
+- ✅ Send a success response to the client with the resume information found and an appropriate message. Set the 200 status code to the response.
+- ✅ Send an error response to the client with a status code of 500 and an appropriate error message.
