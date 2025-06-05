@@ -264,7 +264,7 @@ This controller will do the following tasks
 - ✅ Send a response to the client with the status code of 200 and a success message as well as the New Resume created.
 - ✅ If something goes wrong while processing these tasks, send an error response with the status code of 500 and an error message
 
-## Get Logged-In User's Resumes API
+## API for Getting Logged-In User's Resumes
 
 API end point: `http://localhost:8000/api/resume`
 
@@ -299,3 +299,31 @@ This controller will ultimately return all the resumes listed under a particular
 - ✅ If there is no resumes found, then send an error response to the client with the status code of 400 and an appropriate message
 - ✅ Send the resumes found to the client
 - ✅ In case while doing all these tasks, if any error happens , send an error response to the client with the status code of 500 and a message indicating that something went wrong.
+
+## API for Getting a Resume By ID
+
+API end point: `http://localhost:8000/api/resume/:id`
+
+Request Method: GET
+
+Access: Private
+
+For client to retrieve a single resume data using it's ID, It needs to hit this API `http://localhost:8000/api/resume/:id`. This API is a private API which means that while making request to this API, the clients are required to send the authorization token with the request. When the client make a GET request to this API, the backend will run a custome middleware function which is named as `protect` and a controller named `getResumeById`
+
+Note: The backend generates a new authorization token and then send that newly generated token to the client side so that the client store the token and could send that token back to the backend with every requests. This process happens everytime when the client makes a POST request to any of the following API end points
+    - `http://localhost:8000/api/auth/register` - An API for registering a new user
+    - `http://localhost:8000/api/auth/login` - An API to login an existing user into the system
+
+### `protect` Custom Middleware
+
+As it is a private API, it will perform some validation in the middle. And these validation include the following tasks
+
+- ✅ it checks for the `Authorization`  header and search for the token string in that header.
+- ✅ if it finds the token string and the token string starts with the word ‘Bearer’ then it will perform the following tasks
+    - Separate the token from the token string and save the token in a variable named `token`
+    - Decode the token for the hidden user ID in the decoded object.
+    - Using the user ID, find the user from the database
+    - Add the user information in the request object so that, if needed, other middleware can access the user information later from the request object like `req.user`
+    - After adding the user information to the request object, it calls the `next()` function and will proceed toward executing the rest of the middleware or controllers in the way.
+- ✅ In case if it does not find the token string or the token string does not start with the word ‘Bearer’, then it terminate the request-response cycle with a status code of 401 and a message indicating that No token is found or the token is not what is expected.
+- ✅ And finally, if something goes wrong while doing these task, it terminate the request-response cycle with a status code of 500 and an error message;
