@@ -311,8 +311,9 @@ Access: Private
 For client to retrieve a single resume data using it's ID, It needs to hit this API `http://localhost:8000/api/resume/:id`. This API is a private API which means that while making request to this API, the clients are required to send the authorization token with the request. When the client make a GET request to this API, the backend will run a custome middleware function which is named as `protect` and a controller named `getResumeById`
 
 Note: The backend generates a new authorization token and then send that newly generated token to the client side so that the client store the token and could send that token back to the backend with every requests. This process happens everytime when the client makes a POST request to any of the following API end points
-    - `http://localhost:8000/api/auth/register` - An API for registering a new user
-    - `http://localhost:8000/api/auth/login` - An API to login an existing user into the system
+
+    - `http://localhost:8000/api/auth/register`  An API for registering a new user
+    - `http://localhost:8000/api/auth/login`  An API to login an existing user into the system
 
 ### `protect` Custom Middleware
 
